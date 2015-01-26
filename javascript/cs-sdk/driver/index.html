@@ -1,0 +1,131 @@
+<!doctype html>
+<html>
+<head>
+	<title>Cloudshare SDK Driver</title>
+</head>
+<body>
+	<script src="/dist/cssdk.js"></script>
+	<script>
+
+	var API_ID = "5VLLDABQSBESQSKY";
+	var API_KEY = "4P3RuSCfFbLQvqJqrBWWrxcxIjZHdlz1CkFqQR4jkIftn3C6wTGfcTawQNMKshUo";
+
+	getEnvs()
+	.then(function(envs) {
+		if (!envs.length)
+			throw new Error("You don't have any environments I need to quit.");
+		console.log("You have " + envs.length + " environments.");
+		return getMachines(envs[0].id);
+	})
+	.then(function(machines) {
+		if (!machines.length)
+			throw new Error("The environment doesn't have any machines");
+		console.log("These are the first env's machines:", machines);
+		return Promise.all([machines[0].id, executePath(machines[0], "echo hello world")]);
+	})
+	.then(function(result) {
+		var machineId = result[0];
+		var executionId = result[1].id;
+		console.log("Execution id:", executionId);
+		console.log("Polling execution status...");
+		return pollExecutionStatus({
+			interval: 5000,
+			machineId: machineId,
+			executionId: executionId
+		});
+	})
+	.then(function(executionStatus) {
+		console.log('execution finished:', executionStatus);
+		console.log('execution output:', executionStatus.standardOutput);
+	})
+	.catch(function(error) {
+		console.log(error);
+	});
+
+	function getEnvs() {
+		return get("envs");
+	}
+
+	function getMachines(envId) {
+		return get("envs/actions/machines", {eId: envId});
+	}
+
+	function executePath(machine, command) {
+		console.log("Executing '" + command + "' on: ", machine.name);
+		return post("vms/actions/executePath", {
+			vmId: machine.id,
+			path: command
+		});
+	}
+
+	function pollExecutionStatus(options) {
+		return new Promise(function(resolve) {
+			pollRec(options, resolve);
+		});
+
+		function pollRec(options, resolve) {
+			setTimeout(function() {
+				console.log("Polling execution status...");
+				getExecutionStatus(options.machineId, options.executionId)
+				.then(function(result) {
+					if (result.success === null)
+						pollRec(options, resolve);
+					else
+						resolve(result);
+				});
+			}, options.interval);
+		}
+	}
+
+	function getExecutionStatus(machineId, executionId) {
+		return get("vms/actions/checkExecutionStatus", {
+			vmId: machineId,
+			executionId: executionId
+		});
+	}
+
+	function get(path, params) {
+		return req({
+			method: 'GET',
+			path: path,
+			queryParams: params
+		})
+		.then(function(response) {
+			return response.content;
+		});
+	}
+
+	function post(path, body) {
+		return req({
+			method: 'POST',
+			path: path,
+			content: body
+		})
+		.then(function(response) {
+			return response.content;
+		});
+	}
+
+	function req(options) {
+		return cssdk.req({
+			hostname: "use.cloudshare.com",
+			method: options.method,
+			path: options.path,
+			apiId: API_ID,
+			apiKey: API_KEY,
+			queryParams: options.queryParams,
+			content: options.content
+		})
+		.then(function(response) {
+			return response;
+		})
+		.catch(function(response) {
+			if (response instanceof Error)
+				console.log(response);
+			else
+				console.log(response);
+		});		
+	}
+	</script>
+</body>
+</html>
