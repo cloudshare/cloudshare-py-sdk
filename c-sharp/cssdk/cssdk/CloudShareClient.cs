@@ -52,6 +52,7 @@ namespace cssdk
     {
         public int Status { get; set; }
         public T Content { get; set; }
+        public dynamic ErrorContent { get; set; }
     }
 
     public class HostnameMissingException : Exception {}
@@ -72,10 +73,17 @@ namespace cssdk
         public async Task<ResponseT<T>> ReqAsync<T>(Request request)
         {
             var response = await GetHttpResponse(request);
+            if (response.Status / 100 != 2)
+                return new ResponseT<T>
+                {
+                    ErrorContent = response.Content != null ? new JavaScriptSerializer().DeserializeObject(response.Content) : null,
+                    Status = response.Status
+                };
             return new ResponseT<T>
             {
                 Content = response.Content != null ? new JavaScriptSerializer().Deserialize<T>(response.Content) : default(T),
-                Status = response.Status
+                Status = response.Status,
+                ErrorContent = null
             };
         }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using cssdk;
 
@@ -26,17 +27,17 @@ namespace driver
 
         private static async Task<string> GetEnvId()
         {
-            var envs = await GetAsync("envs");
-            if (envs.Length == 0)
+            var envs = await GetAsync<IList<Env>>("envs");
+            if (envs.Count == 0)
                 throw new Exception("You don't have any environments! Quitting...");
-            var firstEnv = await GetAsync("envs/actions/GetExtended", new
+            var firstEnv = await GetAsync<EnvExtended>("envs/actions/GetExtended", new
                 {
-                    envId = envs[0]["id"]
+                    envId = envs[0].id
                 });
-            if (firstEnv["statusText"] != "Ready")
-                throw new Exception(string.Format("Your environment is not running, it's status is: {0}", firstEnv["statusText"]));
-            Console.WriteLine("I'm going to run \"echo hello world\" on environment: {0}", envs[0]["name"]);
-            return envs[0]["id"];
+            if (firstEnv.statusText != "Ready")
+                throw new Exception(string.Format("Your environment is not running, it's status is: {0}", firstEnv.statusText));
+            Console.WriteLine("I'm going to run \"echo hello world\" on environment: {0}", envs[0].name);
+            return envs[0].id;
         }
 
         private static async Task<string> GetMachineId(string envId)
@@ -98,6 +99,17 @@ namespace driver
                 });
         }
 
+        private static async Task<T> GetAsync<T>(string path, object queryParams = null)
+        {
+            return await RequestAsync<T>(new
+            {
+                Method = HttpMethodEnum.GET,
+                Path = path,
+                QueryParams = queryParams,
+                Body = (object)null
+            });
+        }
+
         private static async Task<dynamic> PostAsync(string path, object body=null)
         {
             return await RequestAsync(new
@@ -111,19 +123,58 @@ namespace driver
 
         private static async Task<dynamic> RequestAsync(dynamic options)
         {
-            var response = await client.ReqAsync(new Request
-            {
-                Hostname = "use.cloudshare.com",
-                Method = options.Method,
-                Path = options.Path,
-                QueryParams = options.QueryParams,
-                Body = options.Body,
-                ApiId = API_ID,
-                ApiKey = API_KEY,
-            });
+            var response = await client.ReqAsync(GetRequest(options));
             if (response.Status >= 300 || response.Status < 200)
                 throw new Exception(response.Content != null ? response.Content["message"] : null);
             return response.Content;
+        }
+
+        private static async Task<T> RequestAsync<T>(dynamic options)
+        {
+            var response = await client.ReqAsync<T>(GetRequest(options));
+            if (response.Status >= 300 || response.Status < 200)
+                throw new Exception(response.ErrorContent != null ? response.ErrorContent["message"] : null);
+            return response.Content;
+        }
+
+        private static Request GetRequest(dynamic options)
+        {
+            return new Request
+                {
+                    Hostname = "webintg.cloudshare.com",
+                    Method = options.Method,
+                    Path = options.Path,
+                    QueryParams = options.QueryParams,
+                    Body = options.Body,
+                    ApiId = API_ID,
+                    ApiKey = API_KEY,
+                };
+        }
+
+        private class Env
+        {
+            public string id { get; set; }
+            public string name { get; set; }
+        }
+
+        private class EnvExtended : Env
+        {
+            public string description { get; set; }
+            public string blueprintId { get; set; }
+            public string blueprintName { get; set; }
+            public string policyId { get; set; }
+            public string policyName { get; set; }
+            public DateTime expirationTime { get; set; }
+            public bool invitationAllowed { get; set; }
+            public string organization { get; set; }
+            public string ownerEmail { get; set; }
+            public string projectId { get; set; }
+            public string projectName { get; set; }
+            public string snapshotId { get; set; }
+            public string snapshotName { get; set; }
+            public int statusCode { get; set; }
+            public string statusText { get; set; }
+            public string regionId { get; set; }
         }
     }
 }

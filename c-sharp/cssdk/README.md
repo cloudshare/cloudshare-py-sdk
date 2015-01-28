@@ -13,6 +13,7 @@ The `CloudShareSdk` has one method `GetClient()` that returns an `ICloudShareCli
 public interface ICloudShareClient
 {
     Task<Response> ReqAsync(Request request);
+    Task<ResponseT<T>> ReqAsync<T>(Request request);
 }
 public struct Request
 {
@@ -30,11 +31,17 @@ public struct Response
     public int Status { get; set; }
     public dynamic Content { get; set; }
 }
+
+public struct ResponseT<T>
+{
+    public int Status { get; set; }
+    public T Content { get; set; }
+}
 ```
 
 `Request.Hostname`, `Request.Method`, `Request.ApiId` and `Request.ApiKey` are required. In order to call something useful `Request.Path` needs to be filled (e.g. `Path="envs"`, see examples below). `Request.QueryParams` and `Request.Body` are anonymous objects, `Body` is parsed into JSON before the request is sent, and `QueryParams` is parsed into a query string and appended to the final URL.
 
-`Response.Status` holds the HTTP status code, if it's not in the 200's range an error was returned, if a 204 is returned `Response.Content` is null. Otherwise `Response.Content` is a IDictionary<string,object> or a IList<object>, see examples below.
+`Response(T).Status` holds the HTTP status code, if it's not in the 200's range an error was returned, if a 204 is returned `Response(T).Content` is null or default value. Otherwise `Response.Content` is a IDictionary<string,object> or a IList<object> in case of the dynamic version, or the parametered typed given, see examples below.
 
 Examples
 --------
@@ -65,13 +72,13 @@ public void TestMethod()
 }
 ```
 
-#### Get one environment
+#### Get one environment using typed ReqAsync()
 ```
 [TestMethod]
 public void TestMethod()
 {
     var client = CloudShareSdk.GetClient();
-    var response = client.ReqAsync(new Request
+    var response = client.ReqAsync<Env>(new Request
     {
         Hostname = "use.cloudshare.com",
         Method = HttpMethodEnum.GET,
@@ -82,10 +89,20 @@ public void TestMethod()
         ApiKey = "4P3RuSCfFbLQvqJqrBWWrxcxIjZHdlz1CkFqQR4jkIftn3C6wTGfcTawQNMKshUo",
     }).Result;
     if (response.Status >= 300 || response.Status < 200)
-        throw new Exception(response.Content != null ? response.Content["message"] : null);
+        throw new Exception(response.ErrorContent != null ? response.ErrorContent["message"] : null);
     var env = response.Content;
-    foreach (var kv in (IDictionary<string, Object>)env)
-        Debug.WriteLine("{0}: {1}", kv.Key, kv.Value);
+    Debug.WriteLine(env.ToString());
+}
+
+class Env
+{
+    public string id { get; set; }
+    public string name { get; set; }
+
+    public string ToString()
+    {
+        return string.Format("Env<{0}> {1}", id, name);
+    }
 }
 ```
 
