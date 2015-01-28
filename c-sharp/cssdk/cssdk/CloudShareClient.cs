@@ -28,6 +28,7 @@ namespace cssdk
     public interface ICloudShareClient
     {
         Task<Response> ReqAsync(Request request);
+        Task<ResponseT<T>> ReqAsync<T>(Request request);
     }
 
     public struct Request
@@ -47,6 +48,12 @@ namespace cssdk
         public dynamic Content { get; set; }
     }
 
+    public struct ResponseT<T>
+    {
+        public int Status { get; set; }
+        public T Content { get; set; }
+    }
+
     public class HostnameMissingException : Exception {}
     public class ApiIdMissingException : Exception { }
     public class ApiKeyMissingException : Exception { }
@@ -62,7 +69,27 @@ namespace cssdk
             AuthenticationParameterProvider = authenticationParameterProvider;
         }
 
+        public async Task<ResponseT<T>> ReqAsync<T>(Request request)
+        {
+            var response = await GetHttpResponse(request);
+            return new ResponseT<T>
+            {
+                Content = response.Content != null ? new JavaScriptSerializer().Deserialize<T>(response.Content) : default(T),
+                Status = response.Status
+            };
+        }
+
         public async Task<Response> ReqAsync(Request request)
+        {
+            var response = await GetHttpResponse(request);
+            return new Response
+                {
+                    Content = response.Content != null ? new JavaScriptSerializer().DeserializeObject(response.Content) : null,
+                    Status = response.Status
+                };
+        }
+
+        private async Task<HttpResponse> GetHttpResponse(Request request)
         {
             if (request.Hostname == null)
                 throw new HostnameMissingException();
@@ -79,12 +106,7 @@ namespace cssdk
                     Path = GeneratePathAndQueryString(request)
                 };
             var response = await Http.ReqAsync(r);
-
-            return new Response
-                {
-                    Content = response.Content != null ? new JavaScriptSerializer().DeserializeObject(response.Content) : null,
-                    Status = response.Status
-                };
+            return response;
         }
 
         private IDictionary<string, string> GetHeaders(Request request)
