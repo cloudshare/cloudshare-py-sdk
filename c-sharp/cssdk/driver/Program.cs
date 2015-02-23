@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using cssdk;
 
@@ -8,13 +9,29 @@ namespace driver
     class Program
     {
         private static ICloudShareClient client;
-        private const string API_ID = "5VLLDABQSBESQSKY";
-        private const string API_KEY = "4P3RuSCfFbLQvqJqrBWWrxcxIjZHdlz1CkFqQR4jkIftn3C6wTGfcTawQNMKshUo";
+        private const string API_ID = null;
+        private const string API_KEY = null;
 
         static void Main(string[] args)
         {
             client = CloudShareSdk.GetClient();
-            Run().Wait();
+            if (API_ID == null || API_KEY == null)
+                WriteMissingCredentialsMessage();
+            else
+                TryRun();
+        }
+
+        private static void TryRun()
+        {
+            try
+            {
+                Run().Wait();
+            }
+            catch (AggregateException e)
+            {
+                Console.WriteLine("{0}", e.InnerException);
+                Console.ReadKey();
+            }
         }
 
         private static async Task Run()
@@ -141,7 +158,7 @@ namespace driver
         {
             return new Request
                 {
-                    Hostname = "webintg.cloudshare.com",
+                    Hostname = "use.cloudshare.com",
                     Method = options.Method,
                     Path = options.Path,
                     QueryParams = options.QueryParams,
@@ -175,6 +192,12 @@ namespace driver
             public int statusCode { get; set; }
             public string statusText { get; set; }
             public string regionId { get; set; }
+        }
+
+        private static void WriteMissingCredentialsMessage()
+        {
+            Console.WriteLine("Please enter user API ID and Key in API_ID and API_KEY variables in the source code");
+            Console.ReadKey();
         }
     }
 }

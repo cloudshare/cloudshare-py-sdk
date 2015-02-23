@@ -1,24 +1,36 @@
 <!doctype html>
 <html>
 <head>
-	<title>Cloudshare SDK Driver</title>
+	<title>CloudShare SDK Driver</title>
 </head>
 <body>
+	<h1>CloudShare SDK Driver</h1>
+	<p>
+		Open your devtools console (F12) to watch the output of this sample program.
+	</p>
 	<script src="/dist/cssdk.js"></script>
 	<script>
+	
+	var API_ID = null;
+	var API_KEY = null;
 
-	var API_ID = "5VLLDABQSBESQSKY";
-	var API_KEY = "4P3RuSCfFbLQvqJqrBWWrxcxIjZHdlz1CkFqQR4jkIftn3C6wTGfcTawQNMKshUo";
+	if (!API_ID || API_KEY)
+		throw new Error("Fill out valid API ID and Key pair in the global API_ID and API_KEY variables");
 
 	getEnvs()
 	.then(function(envs) {
-		if (!envs.length)
-			throw new Error("You don't have any environments I need to quit.");
+		if (!envs || !envs.length)
+			throw new Error("You don't have any environments");
 		console.log("You have " + envs.length + " environments.");
-		return getMachines(envs[0].id);
+		return getEnvExtended(envs[0].id);
+	})
+	.then(function(envExtended) {
+		if (!envExtended || envExtended.statusText !== "Ready")
+			throw new Error("Your first environment isn't running (" + envExtended.name + ")");
+		return getMachines(envExtended.id);
 	})
 	.then(function(machines) {
-		if (!machines.length)
+		if (!machines || !machines.length)
 			throw new Error("The environment doesn't have any machines");
 		console.log("These are the first env's machines:", machines);
 		return Promise.all([machines[0].id, executePath(machines[0], "echo hello world")]);
@@ -39,11 +51,15 @@
 		console.log('execution output:', executionStatus.standardOutput);
 	})
 	.catch(function(error) {
-		console.log(error);
+		console.log('Error:', error);
 	});
 
 	function getEnvs() {
 		return get("envs");
+	}
+
+	function getEnvExtended(envId) {
+		return get("envs/actions/getextended", {envId: envId});
 	}
 
 	function getMachines(envId) {
@@ -91,7 +107,7 @@
 			queryParams: params
 		})
 		.then(function(response) {
-			return response.content;
+			return response && response.content;
 		});
 	}
 
@@ -102,7 +118,7 @@
 			content: body
 		})
 		.then(function(response) {
-			return response.content;
+			return response && response.content;
 		});
 	}
 
@@ -120,10 +136,7 @@
 			return response;
 		})
 		.catch(function(response) {
-			if (response instanceof Error)
-				console.log(response);
-			else
-				console.log(response);
+			console.log('Request failed:', response);
 		});		
 	}
 	</script>

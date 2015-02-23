@@ -39,7 +39,7 @@ public struct ResponseT<T>
 }
 ```
 
-`Request.Hostname`, `Request.Method`, `Request.ApiId` and `Request.ApiKey` are required. In order to call something useful `Request.Path` needs to be filled (e.g. `Path="envs"`, see examples below). `Request.QueryParams` and `Request.Body` are anonymous objects, `Body` is parsed into JSON before the request is sent, and `QueryParams` is parsed into a query string and appended to the final URL.
+`Request.Hostname`, `Request.Method`, `Request.ApiId` and `Request.ApiKey` are required. In order to call something useful `Request.Path` must be entered (e.g. `Path="envs"`, see examples below). `Request.QueryParams` and `Request.Body` are anonymous objects, `Body` is formatted into JSON before the request is sent, and `QueryParams` is formatted into a query string and appended to the final URL.
 
 `Response(T).Status` holds the HTTP status code, if it's not in the 200's range an error was returned, if a 204 is returned `Response(T).Content` is null or default value. Otherwise `Response.Content` is a IDictionary<string,object> or a IList<object> in case of the dynamic version, or the parametered typed given, see examples below.
 

@@ -7,13 +7,20 @@ The all-in-one javascript bundles are already built and ready to use in `dist/` 
 
 ### Build it yourself
 1. Install node version 0.10.33
-2. run `npm install`
-3. Use the make-like command `node make` to run the package's tasks:
+2. run `npm install -g karma@0.12.31 karma-cli@0.0.4 webpack@1.5.3 http-server@0.7.3`
+3. `cd cs-sdk`
+4. run `npm install`
+5. Use the make-like command `node make` to run the package's tasks:
   1. `node make bundle` to build the unminified `dist/cssdk.js` (with built-in source-map).
   2. `node make bundle-min` to build the minified `dist/cssdk-min.js`.
   3. `npm test` to run the unit tests once.  
   4. `node make watchspec karma` to run the unit tests continously on file changes.
   5. `node make watch server` to run the driver server and build the package on file changes.
+
+On windows machines with more than one visual studio installed, node-gyp complains sometimes. Choosing another visual studio version to use seem to help:
+```
+npm install -g --msvs_version=2012 karma@0.12.31 karma-cli@0.0.4 webpack@1.5.3 http-server@0.7.3 
+``` 
 
 Interface
 ---------
@@ -40,6 +47,7 @@ If one of the required options is null/undefined, an exception is thrown. Otherw
 ```
 
 `status` is the HTTP response status, if not in the 200's range an error occured, if the status is 204 `content` is null. Otherwise `content` holds the actual response in form of an Object or an Array.
+
 
 Example Usage
 -------------

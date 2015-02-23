@@ -1,6 +1,7 @@
 require('shelljs/make');
 var format = require('util').format;
 var Promise = require('es6-promise').Promise;
+var glob = require('glob');
 
 var entry = "src/index.js";
 var specs = "spec/*.js";
@@ -8,64 +9,88 @@ var dist = "dist/cssdk.js";
 var distMinified = "dist/cssdk.min.js";
 var specDist = "dist/cssdk-spec.js";
 var standalone = "cssdk";
-var browserifyCmd = "./node_modules/.bin/browserify";
-var watchifyCmd = "./node_modules/.bin/watchify";
-var karmaCmd = "./node_modules/karma/bin/karma";
-var uglifyCmd = "./node_modules/.bin/uglifyjs";
 
-target.server = function() {
+target['server'] = function() {
 	if (!which('http-server'))
-		throw new Error('http-server is required');
+		throw new Error('please npm install -g http-server');
 	execCmd("http-server . -p 8081");
 };
 
-target.karma = function() {
-	if (!test('-f', karmaCmd))
-		throw new Error('local karma is required');
-	execCmd("node " + karmaCmd + " start karma.conf.js");
+target['karma'] = function() {
+	if (!which('karma'))
+		throw new Error('please npm install -g karma karma-cli');
+	execCmd("karma start karma.conf.js");
 };
 
 target['karma-single'] = function() {
-	if (!test('-f', karmaCmd))
-		throw new Error('local karma is required');
-	execCmd("node " + karmaCmd + " start karma.conf.js --single-run");
+	if (!which('karma'))
+		throw new Error('please npm install -g karma karma-cli');
+	execCmd("karma start karma.conf.js --single-run");
 };
 
-target.watch = function() {
-	if (!test('-f', watchifyCmd))
-		throw new Error('local watchify is required');
-	execCmd(watchifyCmd + getBundleArgs() + " -v");
+target['watch'] = function() {
+	if (!which('webpack'))
+		throw new Error('please npm install -g webpack');
+	webpackWatch(entry, dist, standalone);
 };
 
-target.bundle = function() {
-	if (!test('-f', browserifyCmd))
-		throw new Error('local browserify is required');
-	execCmd(browserifyCmd + getBundleArgs())
+target['bundle'] = function() {
+	if (!which('webpack'))
+		throw new Error('please npm install -g webpack');
+	webpack(entry, dist, standalone)
 	.then(function() {
 		preambleFileWithLicenseComment(dist);	
 	});
 };
 
 target['bundle-min'] = function() {
-	if (!test('-f', browserifyCmd))
-		throw new Error('local browserify is required');
-	execCmd(browserifyCmd + getBundleArgsForPipe() + " | " + uglifyCmd + " > " + distMinified)
+	if (!which('webpack'))
+		throw new Error('please npm install -g webpack');
+	webpackMinimize(entry, distMinified, standalone)
 	.then(function() {
 		preambleFileWithLicenseComment(distMinified);
 	});
 };
 
-target.watchspec = function() {
-	if (!test('-f', watchifyCmd))
-		throw new Error('local watchify is required');
-	execCmd(watchifyCmd + getBundleSpecArgs() + " -v");
+target['watchspec'] = function() {
+	if (!which('webpack'))
+		throw new Error('please npm install -g webpack');
+	webpackWatch(glob.sync(specs), specDist, standalone);
 };
 
-target.bundlespec = function() {
-	if (!test('-f', browserifyCmd))
-		throw new Error('local browserify is required');
-	execCmd(browserifyCmd + getBundleSpecArgs());
+target['bundlespec'] = function() {
+	if (!which('webpack'))
+		throw new Error('please npm install -g webpack');
+	webpack(glob.sync(specs), specDist, standalone);
 };
+
+function webpack(entry, bundleName, name) {
+	return execCmd(getWebpackArguments(entry, bundleName, name));
+}
+
+function webpackWatch(entry, bundleName, name) {
+	return execCmd(getWebpackWatchArguments(entry, bundleName, name));
+}
+
+function webpackMinimize(entry, bundleName, name) {
+	return execCmd(getWebpackMinimizeArguments(entry, bundleName));
+}
+
+function getWebpackWatchArguments(entry, bundleName, name) {
+	return getWebpackArguments(entry, bundleName, name) + " --watch";
+}
+
+function getWebpackMinimizeArguments(entry, bundleName, name) {
+	return getWebpackArguments(entry, bundleName, name).replace("--devtool inline-source-map", "") + " --optimize-minimize";
+}
+
+function getWebpackArguments(entry, bundleName, name) {
+	return format('webpack %s %s --output-library "%s" --output-library-target umd --devtool inline-source-map', joinEntriesIfArray(entry), bundleName, name)
+}
+
+function joinEntriesIfArray(entryOrEntries) {
+	return entryOrEntries instanceof Array ? entryOrEntries.join(" ") : entryOrEntries
+}
 
 function execCmd(cmd) {
 	return new Promise(function(resolve) {
@@ -80,19 +105,6 @@ function execCmd(cmd) {
 
 function fixPath(path) {
 	return path.replace(/[\/\\]/g, require('path').sep);
-}
-
-function getBundleArgsForPipe() {
-	return format(" %s -d -s %s ", entry, standalone);
-}
-
-function getBundleArgs() {
-	return format(" %s -o %s -d -s %s", entry, dist, standalone);
-}
-
-function getBundleSpecArgs() {
-	var sp = require('glob').sync(specs).join(" ");
-	return format(" %s -o %s -d", sp, specDist);	
 }
 
 function preambleFileWithLicenseComment(file) {

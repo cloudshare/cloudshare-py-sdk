@@ -61,7 +61,7 @@ def request(method, path, queryParams=None, content=None):
 					 queryParams=queryParams,
 					 content=content)
 	if res.status / 100 != 2:
-		raise Exception(res)
+		raise Exception('{} {}'.format(res.status, res.content['message']))
 	return res.content
 
 if __name__ == "__main__":

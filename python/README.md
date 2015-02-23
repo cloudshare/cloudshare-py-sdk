@@ -7,6 +7,8 @@ Just `import cssdk` and use the function `cssdk.req()` described below.
 
 Interface
 ---------
+This library is written for python 2.7.
+
 ```
 def req(hostname, method, apiId, apiKey, path="", queryParams=None, content=None)
 ```
