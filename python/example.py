@@ -43,7 +43,7 @@ def get_execution_status(machine, execution):
 	print "polling execution status..."
 	return get("vms/actions/checkExecutionStatus", {
 		'vmId': machine['id'],
-		'executionId': execution['id']
+		'executionId': execution['executionId']
 	});
 
 def post(path, content=None):
