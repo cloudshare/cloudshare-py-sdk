@@ -27,7 +27,21 @@ namespace cssdk
 {
     public interface ICloudShareClient
     {
+        /// <summary>
+        /// Asynchronously perform an API request.
+        /// 
+        /// Important note: Due to ASP.NET limitation, please use this method with await (and not GetResult)
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns>A task that resolves to Response</returns>
         Task<Response> ReqAsync(Request request);
+        /// <summary>
+        /// Asynchronously perform an API request.
+        /// 
+        /// Important note: Due to ASP.NET limitation, please use this method with await (and not GetResult)
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns>A task that resolves to Generic Response</returns>
         Task<ResponseT<T>> ReqAsync<T>(Request request);
     }
 
