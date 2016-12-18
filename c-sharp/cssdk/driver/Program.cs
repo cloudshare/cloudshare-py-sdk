@@ -166,12 +166,12 @@ namespace driver
                 vmId = machineId,
                 path = command
             });
-            var executionStatus = await CheckExecutionStatus(machineId, executionContext["id"]);
+            var executionStatus = await CheckExecutionStatus(machineId, executionContext["executionId"]);
             var retries = 0;
             while (!executionStatus.Success && retries < 10)
             {
                 await Task.Delay(5000);
-                executionStatus = await CheckExecutionStatus(machineId, executionContext["id"]);
+                executionStatus = await CheckExecutionStatus(machineId, executionContext["executionId"]);
                 retries += 1;
             }
             return executionStatus.Output;

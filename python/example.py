@@ -5,8 +5,11 @@ from collections import namedtuple
 CartItemType = namedtuple("CartItemType", ["BASED_ON_BP", "ADD_TEMPLATE_VM"])(1,2)
 TemplateType = namedtuple("TemplateType", ["BLUEPRINT", "VM"])(0,1)
 
-API_ID = "5VLLDABQSBESQSKY"
-API_KEY = "4P3RuSCfFbLQvqJqrBWWrxcxIjZHdlz1CkFqQR4jkIftn3C6wTGfcTawQNMKshUo"
+API_ID = None
+API_KEY = None
+
+if API_ID is None or API_KEY is None:
+	raise Exception("Fill out valid API ID and key pair")
 
 def main():
 	example1_execute_command_on_machine()
@@ -90,7 +93,7 @@ def get_first_machine(env):
 	machines = get('envs/actions/machines/', {'eid': env['id']})
 	if len(machines) == 0:
 		raise Exception("Your first environment doesn't have any machines!")
-	print "I'm going to execute \"echo hello world\" on the machine \"%s\" machine in environment \"%s\" ." % (machines[0]['name'], env['name'])
+	print "I'm going to execute \"echo hello world\" on the machine \"%s\" in environment \"%s\" ." % (machines[0]['name'], env['name'])
 	return machines[0]
 
 def execute_path(machine, command):
