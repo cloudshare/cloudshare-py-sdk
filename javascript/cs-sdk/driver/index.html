@@ -10,6 +10,16 @@
 	</p>
 	<script src="/dist/cssdk.js"></script>
 	<script>
+
+	var CartItemType = {
+        BasedOnBp: 1,
+        AddTemplateVm: 2
+    };
+
+    var TemplateType = {
+        Blueprint: 0,
+        Vm: 1
+    };
 	
 	var API_ID = null;
 	var API_KEY = null;
@@ -17,42 +27,125 @@
 	if (!API_ID || !API_KEY)
 		throw new Error("Fill out valid API ID and Key pair in the global API_ID and API_KEY variables");
 
-	getEnvs()
-	.then(function(envs) {
-		if (!envs || !envs.length)
-			throw new Error("You don't have any environments");
-		console.log("You have " + envs.length + " environments.");
-		return getEnvExtended(envs[0].id);
-	})
-	.then(function(envExtended) {
-		if (!envExtended || envExtended.statusText !== "Ready")
-			throw new Error("Your first environment isn't running (" + envExtended.name + ")");
-		return getMachines(envExtended.id);
-	})
-	.then(function(machines) {
-		if (!machines || !machines.length)
-			throw new Error("The environment doesn't have any machines");
-		console.log("These are the first env's machines:", machines);
-		return Promise.all([machines[0].id, executePath(machines[0], "echo hello world")]);
-	})
-	.then(function(result) {
-		var machineId = result[0];
-		var executionId = result[1].id;
-		console.log("Execution id:", executionId);
-		console.log("Polling execution status...");
-		return pollExecutionStatus({
-			interval: 5000,
-			machineId: machineId,
-			executionId: executionId
+	example1();
+
+	function example1() {
+		getEnvs()
+		.then(function(envs) {
+			if (!envs || !envs.length)
+				throw new Error("You don't have any environments");
+			console.log("You have " + envs.length + " environments.");
+			return getEnvExtended(envs[0].id);
+		})
+		.then(function(envExtended) {
+			if (!envExtended || envExtended.statusText !== "Ready")
+				throw new Error("Your first environment isn't running (" + envExtended.name + ")");
+			return getMachines(envExtended.id);
+		})
+		.then(function(machines) {
+			if (!machines || !machines.length)
+				throw new Error("The environment doesn't have any machines");
+			console.log("These are the first env's machines:", machines);
+			return Promise.all([machines[0].id, executePath(machines[0], "echo hello world")]);
+		})
+		.then(function(result) {
+			var machineId = result[0];
+			var executionId = result[1].executionId;
+			console.log("Execution id:", executionId);
+			console.log("Polling execution status...");
+			return pollExecutionStatus({
+				interval: 5000,
+				machineId: machineId,
+				executionId: executionId
+			});
+		})
+		.then(function(executionStatus) {
+			console.log('execution finished:', executionStatus);
+			console.log('execution output:', executionStatus.standardOutput);
+		})
+		.catch(function(error) {
+			console.log('Error:', error);
 		});
-	})
-	.then(function(executionStatus) {
-		console.log('execution finished:', executionStatus);
-		console.log('execution output:', executionStatus.standardOutput);
-	})
-	.catch(function(error) {
-		console.log('Error:', error);
-	});
+	}
+
+	function example2() {
+		var environmentName = createEnvironmentName();
+
+		Promise.all([getFirstProjectId(), getMiamiRegionId(), getFirstTemplateVmId()])
+		.then(function(results) {
+			var projectId = results[0];
+			var regionId = results[1];
+			var templateVmId = results[2];
+			return createEnvironment(environmentName, projectId, regionId, templateVmId);
+		})
+		.then(function(env) {
+			console.log("New environment ID: " + env.environmentId);
+			console.log("New environment Name: " + environmentName);
+			console.log("(This new environment is preparing, to avoid unwanted charges login to use.cloudshare.com and delete the environment)");
+		})
+		.catch(function(err) {
+			console.error(err);
+		});
+	}
+
+	function createEnvironmentName() {
+		return "Example API Environment - " + (+new Date());
+	}
+
+	function createEnvironment(name, projectId, regionId, templateVmId) {
+		return post("envs", {
+			environment: {
+				name: name,
+				description: "Environment created from API example",
+				projectId: projectId,
+				policyId: null,
+				regionId: regionId
+			},
+			itemsCart: [
+				{
+					type: CartItemType.AddTemplateVm,
+					name: "My Virtual Machine",
+					description: "My Virtual Machine",
+					templateVmId: templateVmId
+				}
+			]
+		});
+	}
+
+	function getFirstProjectId() {
+		return get("projects")
+		.then(function(projects) {
+			if (!projects || projects.length === 0)
+				throw new Error("No projects found");
+			return projects[0].id;
+		});
+	}
+
+	function getMiamiRegionId() {
+		return get("regions")
+		.then(function(regions) {
+			if (!regions || regions.length === 0)
+				throw new Error("No regions found");
+			var miamiRegion = regions.filter(function(r) {
+				return r.name === "Miami";
+			})[0];
+			if (!miamiRegion)
+				throw new Error("Miami region not found");
+			return miamiRegion.id;
+		});
+	}
+
+	function getFirstTemplateVmId() {
+		return get("templates", {
+			templateType: TemplateType.Vm,
+			take: 1
+		})
+		.then(function(templates) {
+			if (!templates || templates.length === 0)
+				throw new Error("No VM templates found");
+			return templates[0].id;
+		});
+	}
 
 	function getEnvs() {
 		return get("envs");

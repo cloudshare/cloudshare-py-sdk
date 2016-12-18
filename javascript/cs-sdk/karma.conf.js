@@ -18,7 +18,6 @@ module.exports = function(config) {
     ],
 
     preprocessors: {
-      '**/*.js': ['sourcemap']
     },
 
 
