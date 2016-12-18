@@ -64,8 +64,8 @@ def create_environment(name, projectId, regionId, templateVmId):
 		"itemsCart": [
 			{
 				"type": CartItemType.ADD_TEMPLATE_VM,
-				"name": "123",
-				"description": "123123",
+				"name": "My Virtual Machine",
+				"description": "My Virtual Machine",
 				"templateVmId": templateVmId
 			}
 		]

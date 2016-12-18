@@ -1,11 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using cssdk;
 
 namespace driver
 {
+    enum CartItemType
+    {
+        BasedOnBp = 1,
+        AddTemplateVm = 2
+    }
+
+    enum TemplateType
+    {
+        Blueprint = 0,
+        Vm = 1
+    }
+
     class Program
     {
         private static ICloudShareClient client;
@@ -25,7 +38,7 @@ namespace driver
         {
             try
             {
-                Run().Wait();
+                Example1().Wait();
             }
             catch (AggregateException e)
             {
@@ -34,12 +47,92 @@ namespace driver
             }
         }
 
-        private static async Task Run()
+        private static async Task Example1()
         {
             var envId = await GetEnvId();
             var machineId = await GetMachineId(envId);
             var output = await Execute(machineId, "echo hello world");
             Console.WriteLine("Output: {0}", output);
+        }
+
+        private static async Task Example2()
+        {
+            var projectId = await GetFirstProjectId();
+            var regionId = await GetMiamiRegionId();
+            var templateVmId = await GetFirstTemplateVmId();
+            var name = CreateEnvironmentName();
+
+            var env = await CreateEnvironment(name, projectId, regionId, templateVmId);
+
+            Console.WriteLine("New environment ID: {0}", env["environmentId"]);
+            Console.WriteLine("New environment Name: {0}", name);
+            Console.WriteLine("(This new environment is preparing, to avoid unwanted charges log to use.cloudshare.com and delete the environment)");
+        }
+
+        private static string CreateEnvironmentName()
+        {
+            return string.Format("API Example Environment - {0}", GetTimestamp());
+        }
+
+        private static string GetTimestamp()
+        {
+            TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
+            return ((int)t.TotalSeconds).ToString();
+        }
+
+        private static async Task<string> GetFirstProjectId()
+        {
+            var projects = await GetAsync("projects");
+            if (projects.Length == 0)
+                throw new Exception("No projects found");
+            return projects[0]["id"];
+        }
+
+        private static async Task<string> GetMiamiRegionId()
+        {
+            var regions = await GetAsync<IList<dynamic>>("regions");
+            var miami = regions.FirstOrDefault(r => r["name"] == "Miami");
+            if (miami == null)
+                throw new Exception("Miami region not found");
+            return miami["id"];
+        }
+
+        private static async Task<string> GetFirstTemplateVmId()
+        {
+            var templates = await GetAsync<IList<dynamic>>("templates", new
+            {
+                templateType = TemplateType.Vm,
+                take = 1
+            });
+            var first = templates.FirstOrDefault();
+            if (first == null)
+                throw new Exception("No templates found");
+            return first["id"];
+        }
+
+        private static async Task<dynamic> CreateEnvironment(string name, string projectId, string regionId, string templateVmId)
+        {
+            return await PostAsync("envs", new
+            {
+                environment = new
+                {
+                    name = name,
+                    description = "Example API environment",
+                    projectId = projectId,
+                    policyId = (string)null,
+                    regionId = regionId
+                },
+                itemsCart = new List<dynamic>
+                {
+                    new
+                    {
+                        type = CartItemType.AddTemplateVm,
+                        name = "My Virtual Machine",
+                        description = "My Virtual Machine",
+                        templateVmId = templateVmId
+                    }
+                }
+            });
         }
 
         private static async Task<string> GetEnvId()
