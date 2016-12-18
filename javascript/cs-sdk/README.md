@@ -6,20 +6,20 @@ Quickstart
 The all-in-one javascript bundles are already built and ready to use in `dist/` directory. Just include one of `cssdk.js` or `cssdk.min.js` in your html page. A `cssdk` global object is exposed that contain one method `req()`.
 
 ### Build it yourself
-1. Install node version 0.10.33
-2. run `npm install -g karma@0.12.31 karma-cli@0.0.4 webpack@1.5.3 http-server@0.7.3`
-3. `cd cs-sdk`
-4. run `npm install`
-5. Use the make-like command `node make` to run the package's tasks:
-  1. `node make bundle` to build the unminified `dist/cssdk.js` (with built-in source-map).
-  2. `node make bundle-min` to build the minified `dist/cssdk-min.js`.
-  3. `npm test` to run the unit tests once.  
-  4. `node make watchspec karma` to run the unit tests continously on file changes.
-  5. `node make watch server` to run the driver server and build the package on file changes.
+1. Install node version 4
+2. `cd cs-sdk`
+3. run `npm install`
+4. Use the make-like command `npm run` to run the package's tasks: (this assumes you're running a windows machine, see step 5 if not)
+    1. `npm run bundle` to build the unminified `dist/cssdk.js` (with built-in source-map).
+    2. `set dev=true && npm run bundle` to build the minified `dist/cssdk.min.js`.
+    3. `npm test` to run the unit tests.  
+5. If you're running a unixy machine
+    1. In `package.json` under the `scripts` section convert the use of batch-style variable to unix like (`%VAR%` => `$VAR`) before running `npm run`
+    2. To build the minified version run `dev=true && npm run bundle`
 
 On windows machines with more than one visual studio installed, node-gyp complains sometimes. Choosing another visual studio version to use seem to help:
 ```
-npm install -g --msvs_version=2012 karma@0.12.31 karma-cli@0.0.4 webpack@1.5.3 http-server@0.7.3 
+npm install --msvs_version=2012
 ``` 
 
 Interface
@@ -48,16 +48,15 @@ If one of the required options is null/undefined, an exception is thrown. Otherw
 
 `status` is the HTTP response status, if not in the 200's range an error occured, if the status is 204 `content` is null. Otherwise `content` holds the actual response in form of an Object or an Array.
 
-
 Example Usage
 -------------
 #### An example html
 You can take a look at `driver/index.html` for a kind of "hello world" example. To run it do the following:
 
 1. `npm install`
-2. `node make bundle && node make server`
-3. Make sure you set your API ID and API key in the global vars: `API_ID` and `API_KEY`.
-3. Navigate to localhost:8081 and open the browser's javascript console.
+2. `node run server`
+3. Make sure you set your API ID and API key in the global vars: `API_ID` and `API_KEY` in `driver/index.html`.
+3. Navigate to `localhost:8080/driver/index.html` and open the browser's javascript console.
 
 #### List your environments
 ```
