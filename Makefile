@@ -6,7 +6,7 @@ build:
 publish: build test
 	twine upload dist/* --skip-existing
 
-test: build
+test: 
 	nosetests
 
 setup:
