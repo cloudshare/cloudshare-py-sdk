@@ -2,7 +2,8 @@ CloudShare API v3 SDK
 =====================
 Quickstart
 ----------
-Just `import cssdk` and use the function `cssdk.req()` described below.
+`pip install cloudshare`
+Then just `import cssdk` and use the function `cssdk.req()` described below.
 
 
 Interface
@@ -72,3 +73,8 @@ if (res.status / 100 != 2):
 	raise Exception(res.content)
 print res.content
 ```
+
+## Building from source
+
+`make setup`
+`make build test`
