@@ -26,9 +26,9 @@ class TestAuthenticationParameterProvider(unittest.TestCase):
         tokenGenerator.generate = mock.Mock(return_value="TOKEN123")
         provider = AuthenticationParameterProvider(tokenGenerator, hmacer)
 
-        result = provider.get(apiId='API_ID',
-                              apiKey='API_KEY',
-                              url='https://somehost.com/api/v3/callme')
+        provider.get(apiId='API_ID',
+                     apiKey='API_KEY',
+                     url='https://somehost.com/api/v3/callme')
 
         self.assertRegexpMatches(hmacer.hash.call_args[0][
                                  0], r"API_KEYhttps://somehost.com/api/v3/callme\d+TOKEN123")

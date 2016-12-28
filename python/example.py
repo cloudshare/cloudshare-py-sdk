@@ -37,7 +37,8 @@ def example2_create_custom_environment():
     env = create_environment(name, project_id, miami_region_id, template_vm_id)
     print "New environment ID: " + env["environmentId"]
     print "New environment Name: " + name
-    print "(This new environment is preparing, to avoid unwanted charges log to use.cloudshare.com and delete the environment)"
+    print "(This new environment is preparing, to avoid unwanted charges log"
+    "to use.cloudshare.com and delete the environment)"
 
 
 def get_first_project_id():
@@ -106,7 +107,8 @@ def get_first_machine(env):
     machines = get('envs/actions/machines/', {'eid': env['id']})
     if len(machines) == 0:
         raise Exception("Your first environment doesn't have any machines!")
-    print "I'm going to execute \"echo hello world\" on the machine \"%s\" in environment \"%s\" ." % (machines[0]['name'], env['name'])
+    print '''I'm going to execute "echo hello world" on the machine "%s" in environment "%s" .''' % (
+        machines[0]['name'], env['name'])
     return machines[0]
 
 
@@ -148,6 +150,7 @@ def request(method, path, queryParams=None, content=None):
 
 def get_timestamp():
     return str(int(time.time()))
+
 
 if __name__ == "__main__":
     main()

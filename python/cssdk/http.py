@@ -34,10 +34,10 @@ class Http(object):
         return req
 
     def _add_content_length_header_if_needed(self, method, headers, content):
-        if headers == None:
+        if headers is None:
             headers = {}
         if method == 'PUT' or method == 'POST':
-            headers['Content-Length'] = len(content) if content != None else 0
+            headers['Content-Length'] = len(content) if content is not None else 0
         return headers
 
 

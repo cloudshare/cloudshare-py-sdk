@@ -24,7 +24,7 @@ class Requester(object):
 
     def request(self, hostname, method, apiId, apiKey, path="", queryParams=None, content=None):
         url = self._build_url(hostname, path, queryParams)
-        json_content = json.dumps(content) if content != None else None
+        json_content = json.dumps(content) if content is not None else None
         headers = self._build_headers(apiId, apiKey, url)
         res = self.http.request(method, url, headers, json_content)
         return Response(status=res.status, content=self._try_to_parse_json(res.content))
