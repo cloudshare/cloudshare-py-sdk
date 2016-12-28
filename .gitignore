@@ -1,6 +1,7 @@
-*.swp
-build
-*.pyc
-MANIFEST
 *.egg-info
+*.pyc
+*.swp
+.ropeproject
+build
 dist/
+MANIFEST
