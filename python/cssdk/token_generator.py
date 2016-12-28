@@ -13,9 +13,11 @@
 # limitations under the License.
 import random
 import string
+
+
 class TokenGenerator(object):
 
-	alphabet = string.ascii_lowercase + string.ascii_uppercase + string.digits
+    alphabet = string.ascii_lowercase + string.ascii_uppercase + string.digits
 
-	def generate(self):
-		return ''.join(random.choice(TokenGenerator.alphabet) for _ in range(10))
+    def generate(self):
+        return ''.join(random.choice(TokenGenerator.alphabet) for _ in range(10))

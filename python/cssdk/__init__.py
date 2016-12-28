@@ -12,15 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
 def req(hostname, method, apiId, apiKey, path="", queryParams=None, content=None):
-	return _get_requester().request(hostname=hostname,
-							   		method=method,
-							   		apiId=apiId,
-							   		apiKey=apiKey,
-							   		path=path,
-							   		queryParams=queryParams,
-							   		content=content)
+    return _get_requester().request(hostname=hostname,
+                                    method=method,
+                                    apiId=apiId,
+                                    apiKey=apiKey,
+                                    path=path,
+                                    queryParams=queryParams,
+                                    content=content)
+
 
 def _get_requester():
-	import ioc
-	return ioc.get_requester()
+    import ioc
+    return ioc.get_requester()
