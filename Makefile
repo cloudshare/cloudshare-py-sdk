@@ -12,3 +12,5 @@ test: build
 setup:
 	pip install -r dev-requirements.txt
 
+clean:
+	rm -f dist/*
