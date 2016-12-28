@@ -13,9 +13,10 @@
 # limitations under the License.
 import hashlib
 
+
 class HMACer(object):
 
-	def hash(self, input):
-		hmac = hashlib.sha1()
-		hmac.update(input)
-		return hmac.hexdigest()
+    def hash(self, input):
+        hmac = hashlib.sha1()
+        hmac.update(input)
+        return hmac.hexdigest()

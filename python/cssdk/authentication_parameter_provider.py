@@ -13,17 +13,18 @@
 # limitations under the License.
 import time
 
+
 class AuthenticationParameterProvider(object):
 
-	def __init__(self, tokenGenerator, hmacer):
-		self.tokenGenerator = tokenGenerator
-		self.hmacer = hmacer
+    def __init__(self, tokenGenerator, hmacer):
+        self.tokenGenerator = tokenGenerator
+        self.hmacer = hmacer
 
-	def get(self, apiId, apiKey, url):
-		timestamp = int(time.time())
-		token = self.tokenGenerator.generate()
-		return "userapiid:%s;timestamp:%d;token:%s;hmac:%s" % (
-			apiId, 
-			timestamp, 
-			token, 
-			self.hmacer.hash("%s%s%d%s" % (apiKey, url, timestamp, token)))
+    def get(self, apiId, apiKey, url):
+        timestamp = int(time.time())
+        token = self.tokenGenerator.generate()
+        return "userapiid:%s;timestamp:%d;token:%s;hmac:%s" % (
+            apiId,
+            timestamp,
+            token,
+            self.hmacer.hash("%s%s%d%s" % (apiKey, url, timestamp, token)))

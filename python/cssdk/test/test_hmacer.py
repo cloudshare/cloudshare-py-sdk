@@ -1,11 +1,12 @@
 import unittest
 from ..hmacer import HMACer
 
+
 class TestHMACer(unittest.TestCase):
 
-	def test_hash_returns_the_correct_hash_for_hello_world(self):
-		hmacer = HMACer()
+    def test_hash_returns_the_correct_hash_for_hello_world(self):
+        hmacer = HMACer()
 
-		result = hmacer.hash("hello world")
+        result = hmacer.hash("hello world")
 
-		self.assertEquals(result, "2aae6c35c94fcfb415dbe95f408b9ce91ee846ed")
+        self.assertEquals(result, "2aae6c35c94fcfb415dbe95f408b9ce91ee846ed")
