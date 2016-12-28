@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import cssdk
+import cloudshare
 import time
 from collections import namedtuple
 
@@ -136,7 +136,7 @@ def get(path, queryParams=None):
 
 
 def request(method, path, queryParams=None, content=None):
-    res = cssdk.req(hostname="use.cloudshare.com",
+    res = cloudshare.req(hostname="use.cloudshare.com",
                     method=method,
                     apiId=API_ID,
                     apiKey=API_KEY,
