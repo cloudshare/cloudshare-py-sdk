@@ -7,7 +7,7 @@ setup(
     author='Jonathan Sadan',
     author_email='jonathan at cloudshare dot com',
     url='https://github.com/cloudshare/cloudshare-py-sdk',
-    download_url='https://github.com/cloudshare/cloudshare-py-sdk',
+    download_url='https://github.com/cloudshare/cloudshare-py-sdk/archive/0.1.tar.gz',
     keywords=['cloudshare', 'cloud', 'SDK', 'REST', 'API'],
     classifiers=[],
 )
