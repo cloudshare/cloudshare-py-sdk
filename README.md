@@ -5,7 +5,7 @@ Quickstart
 `pip install cloudshare`
 
 
-Then just `import cssdk` and use the function `cssdk.req()` described below.
+Then just `import cloudshare` and use the function `cloudshare.req()` described below.
 
 
 Interface
@@ -32,12 +32,12 @@ Required parameters are the `hostname`, `method`, `apiId` and `apiKey`.
 Examples
 --------
 #### example.py
-Enter your credentials in the two global variables `API_ID` and `API_KEY` and run it with `python example.py`. The script tries to run the command `echo hello world` on the first machine on the first environment it finds (visible to the user's credentials). 
+Enter your credentials in the two global variables `API_ID` and `API_KEY` and run it with `python example.py`. The script tries to run the command `echo hello world` on the first machine on the first environment it finds (visible to the user's credentials).
 
 #### List your environments
 ```
-import cssdk
-res = cssdk.req(hostname='use.cloudshare.com',
+import cloudshare
+res = cloudshare.req(hostname='use.cloudshare.com',
 				method='GET',
 				path='envs',
 				apiId='Your API ID',
@@ -50,8 +50,8 @@ print [e['name'] for e in res.content]
 
 #### Get one environment
 ```
-import cssdk
-res = cssdk.req(hostname='use.cloudshare.com',
+import cloudshare
+res = cloudshare.req(hostname='use.cloudshare.com',
 				method='GET',
 				path='envs/' + envId,
 				apiId='Your API ID',
@@ -64,8 +64,8 @@ print res.content
 
 #### Suspend an environment
 ```
-import cssdk
-res = cssdk.req(hostname='use.cloudshare.com',
+import cloudshare
+res = cloudshare.req(hostname='use.cloudshare.com',
 				method='PUT',
 				path='envs/actions/suspend',
 				queryParams={'envId': envId},
