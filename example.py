@@ -167,9 +167,9 @@ def get_timestamp():
 def main():
     if len(sys.argv)==2:
         class_id = sys.argv[1]
-        classes = get_class(class_id)
+        get_class(class_id)
     else:
-        classes = get_classes()
+        get_classes()
 
 
 if __name__ == "__main__":
