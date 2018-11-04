@@ -2,20 +2,18 @@
 import cloudshare
 import time
 from collections import namedtuple
+import os
+import sys
 
 CartItemType = namedtuple(
     "CartItemType", ["BASED_ON_BP", "ADD_TEMPLATE_VM"])(1, 2)
 TemplateType = namedtuple("TemplateType", ["BLUEPRINT", "VM"])(0, 1)
 
-API_ID = None
-API_KEY = None
+API_ID = os.environ.get('CLOUDSHARE_API_ID')
+API_KEY = os.environ.get('CLOUDSHARE_API_KEY')
 
 if API_ID is None or API_KEY is None:
     raise Exception("Fill out valid API ID and key pair")
-
-
-def main():
-    example1_execute_command_on_machine()
 
 
 def example1_execute_command_on_machine():
@@ -127,6 +125,21 @@ def get_execution_status(machine, execution):
     })
 
 
+def get_classes():
+    classes = get('class/')
+    if len(classes) == 0:
+        raise Exception("You don't have any classes!")
+
+    print 'found {0} classes'.format(len(classes))
+
+    for cls in classes:
+        print 'class name: {0}'.format(cls['name'])
+
+
+def get_class(class_id):
+    cls = get('class/{}'.format(class_id))
+    print 'class name: {0}'.format(cls['name'])
+
 def post(path, content=None):
     return request('POST', path, content=content)
 
@@ -150,6 +163,13 @@ def request(method, path, queryParams=None, content=None):
 
 def get_timestamp():
     return str(int(time.time()))
+
+def main():
+    if len(sys.argv)==2:
+        class_id = sys.argv[1]
+        classes = get_class(class_id)
+    else:
+        classes = get_classes()
 
 
 if __name__ == "__main__":
