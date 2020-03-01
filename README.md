@@ -43,7 +43,7 @@ res = cloudshare.req(hostname='use.cloudshare.com',
 				apiId='Your API ID',
 				apiKey='You API Key')
 if (res.status / 100 != 2):
-	raise Exception(res)
+	raise Exception(res.status, res.content)
 print 'hi! these are my environments:'
 print [e['name'] for e in res.content]
 ```
@@ -57,7 +57,7 @@ res = cloudshare.req(hostname='use.cloudshare.com',
 				apiId='Your API ID',
 				apiKey='You API Key')
 if (res.status / 100 != 2):
-	raise Exception(res)
+	raise Exception(res.status, res.content)
 print 'look at my environment details:'
 print res.content
 ```
