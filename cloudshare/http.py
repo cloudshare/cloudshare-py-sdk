@@ -28,7 +28,7 @@ class Http(object):
         headers = self._add_content_length_header_if_needed(
             method, headers, content)
         req = urllib.request.Request(url=url,
-                              data=content,
+                              data=content.encode('utf-8') if content is not None else None,
                               headers=headers)
         req.get_method = lambda: method
         return req

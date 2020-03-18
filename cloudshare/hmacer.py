@@ -18,5 +18,5 @@ class HMACer(object):
 
     def hash(self, input):
         hmac = hashlib.sha1()
-        hmac.update(input)
+        hmac.update(input.encode('utf-8'))
         return hmac.hexdigest()
