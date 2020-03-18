@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import json
-import urllib
-from http import Response
+import urllib.request, urllib.parse, urllib.error
+from .http import Response
 
 
 class Requester(object):
@@ -42,7 +42,7 @@ class Requester(object):
         base = "https://%s/api/v3/%s" % (hostname,
                                          self._condition_path_string(path))
         if queryParams:
-            return "%s?%s" % (base, urllib.urlencode(queryParams))
+            return "%s?%s" % (base, urllib.parse.urlencode(queryParams))
         else:
             return base
 

@@ -18,7 +18,7 @@ class TestRequester(unittest.TestCase):
                           apiKey="API_KEY")
 
         url = http.request.call_args[0][1]
-        self.assertEquals("https://some.hostname.com/api/v3/", url)
+        self.assertEqual("https://some.hostname.com/api/v3/", url)
 
     def test_request_passes_the_url_with_path_and_without_query_string(self):
         http = Mock()
@@ -34,7 +34,7 @@ class TestRequester(unittest.TestCase):
                           path="some/path")
 
         url = http.request.call_args[0][1]
-        self.assertEquals("https://some.hostname.com/api/v3/some/path", url)
+        self.assertEqual("https://some.hostname.com/api/v3/some/path", url)
 
     def test_request_passes_the_url_with_path_prefixed_and_without_query_string(self):
         http = Mock()
@@ -50,7 +50,7 @@ class TestRequester(unittest.TestCase):
                           path="/some/path")
 
         url = http.request.call_args[0][1]
-        self.assertEquals("https://some.hostname.com/api/v3/some/path", url)
+        self.assertEqual("https://some.hostname.com/api/v3/some/path", url)
 
     def test_request_passes_the_url_with_path_suffixed_and_without_query_string(self):
         http = Mock()
@@ -66,7 +66,7 @@ class TestRequester(unittest.TestCase):
                           path="some/path/")
 
         url = http.request.call_args[0][1]
-        self.assertEquals("https://some.hostname.com/api/v3/some/path", url)
+        self.assertEqual("https://some.hostname.com/api/v3/some/path", url)
 
     def test_request_passes_the_url_with_path_with_spaces_slashes_and_without_query_string(self):
         http = Mock()
@@ -82,7 +82,7 @@ class TestRequester(unittest.TestCase):
                           path=" /some/path/ ")
 
         url = http.request.call_args[0][1]
-        self.assertEquals("https://some.hostname.com/api/v3/some/path", url)
+        self.assertEqual("https://some.hostname.com/api/v3/some/path", url)
 
     def test_request_passes_the_url_with_path_and_with_query_string(self):
         http = Mock()
@@ -99,7 +99,7 @@ class TestRequester(unittest.TestCase):
                           queryParams={'foo': 'bar', 'aaa': 123})
 
         url = http.request.call_args[0][1]
-        self.assertEquals(
+        self.assertEqual(
             "https://some.hostname.com/api/v3/some/path?foo=bar&aaa=123", url)
 
     def test_request_passes_all_required_headers(self):
@@ -115,7 +115,7 @@ class TestRequester(unittest.TestCase):
                           apiKey="API_KEY")
 
         headers = http.request.call_args[0][2]
-        self.assertEquals({
+        self.assertEqual({
             'Content-Type': 'application/json',
             'Accept': 'application/json',
             'Authorization': 'cs_sha1 AUTH_PARAM'
@@ -135,7 +135,7 @@ class TestRequester(unittest.TestCase):
                           path="envs")
 
         kwargs = authParamProvider.get.call_args[1]
-        self.assertEquals(
+        self.assertEqual(
             'https://some.hostname.com/api/v3/envs', kwargs['url'])
 
     def test_request_passes_a_json_string_content_to_http_request(self):
@@ -152,4 +152,4 @@ class TestRequester(unittest.TestCase):
                           content={'foo': {'aaa': 123}, 'bar': 'chicka'})
 
         content = http.request.call_args[0][3]
-        self.assertEquals('{"foo": {"aaa": 123}, "bar": "chicka"}', content)
+        self.assertEqual('{"foo": {"aaa": 123}, "bar": "chicka"}', content)

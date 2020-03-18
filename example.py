@@ -24,7 +24,7 @@ def example1_execute_command_on_machine():
     while not execution_status['success']:
         time.sleep(5)
         execution_status = get_execution_status(machine, execution)
-    print "Execution finished! output:\n%s" % execution_status['standardOutput']
+    print("Execution finished! output:\n%s" % execution_status['standardOutput'])
 
 
 def example2_create_custom_environment():
@@ -33,9 +33,9 @@ def example2_create_custom_environment():
     template_vm_id = get_first_template_vm_id()
     name = create_environment_name()
     env = create_environment(name, project_id, miami_region_id, template_vm_id)
-    print "New environment ID: " + env["environmentId"]
-    print "New environment Name: " + name
-    print "(This new environment is preparing, to avoid unwanted charges log"
+    print("New environment ID: " + env["environmentId"])
+    print("New environment Name: " + name)
+    print("(This new environment is preparing, to avoid unwanted charges log")
     "to use.cloudshare.com and delete the environment)"
 
 
@@ -93,7 +93,7 @@ def get_first_env():
         raise Exception("You don't have any environments!")
     if get_env_status(envs[0]) != "Ready":
         raise Exception("Your first environment is not running!")
-    print "I found the \"%s\" environment." % envs[0]['name']
+    print("I found the \"%s\" environment." % envs[0]['name'])
     return envs[0]
 
 
@@ -105,8 +105,8 @@ def get_first_machine(env):
     machines = get('envs/actions/machines/', {'eid': env['id']})
     if len(machines) == 0:
         raise Exception("Your first environment doesn't have any machines!")
-    print '''I'm going to execute "echo hello world" on the machine "%s" in environment "%s" .''' % (
-        machines[0]['name'], env['name'])
+    print('''I'm going to execute "echo hello world" on the machine "%s" in environment "%s" .''' % (
+        machines[0]['name'], env['name']))
     return machines[0]
 
 
@@ -118,7 +118,7 @@ def execute_path(machine, command):
 
 
 def get_execution_status(machine, execution):
-    print "polling execution status..."
+    print("polling execution status...")
     return get("vms/actions/checkExecutionStatus", {
         'vmId': machine['id'],
         'executionId': execution['executionId']
@@ -130,15 +130,15 @@ def get_classes():
     if len(classes) == 0:
         raise Exception("You don't have any classes!")
 
-    print 'found {0} classes'.format(len(classes))
+    print('found {0} classes'.format(len(classes)))
 
     for cls in classes:
-        print 'class name: {0}'.format(cls['name'])
+        print('class name: {0}'.format(cls['name']))
 
 
 def get_class(class_id):
     cls = get('class/{}'.format(class_id))
-    print 'class name: {0}'.format(cls['name'])
+    print('class name: {0}'.format(cls['name']))
 
 def post(path, content=None):
     return request('POST', path, content=content)

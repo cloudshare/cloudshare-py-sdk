@@ -17,4 +17,4 @@ class TestTokenGenerator(unittest.TestCase):
 
         results = set([generator.generate() for _ in range(100)])
 
-        self.assertEquals(100, len(results))
+        self.assertEqual(100, len(results))

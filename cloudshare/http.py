@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 
 
 class Http(object):
@@ -19,15 +19,15 @@ class Http(object):
     def request(self, method, url, headers, content):
         req = self._build_request(method, url, headers, content)
         try:
-            f = urllib2.urlopen(req)
+            f = urllib.request.urlopen(req)
             return Response(status=f.getcode(), content=f.read())
-        except urllib2.HTTPError as e:
+        except urllib.error.HTTPError as e:
             return Response(status=e.getcode(), content=e.read())
 
     def _build_request(self, method, url, headers, content):
         headers = self._add_content_length_header_if_needed(
             method, headers, content)
-        req = urllib2.Request(url=url,
+        req = urllib.request.Request(url=url,
                               data=content,
                               headers=headers)
         req.get_method = lambda: method

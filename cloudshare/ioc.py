@@ -14,25 +14,25 @@
 
 
 def get_requester():
-    from requester import Requester
+    from .requester import Requester
     return Requester(get_http(), get_auth_param_provider())
 
 
 def get_auth_param_provider():
-    from authentication_parameter_provider import AuthenticationParameterProvider
+    from .authentication_parameter_provider import AuthenticationParameterProvider
     return AuthenticationParameterProvider(get_token_generator(), get_hmacer())
 
 
 def get_token_generator():
-    from token_generator import TokenGenerator
+    from .token_generator import TokenGenerator
     return TokenGenerator()
 
 
 def get_http():
-    from http import Http
+    from .http import Http
     return Http()
 
 
 def get_hmacer():
-    from hmacer import HMACer
+    from .hmacer import HMACer
     return HMACer()

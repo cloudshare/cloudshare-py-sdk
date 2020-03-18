@@ -16,7 +16,7 @@ class TestAuthenticationParameterProvider(unittest.TestCase):
                               apiKey='API_KEY',
                               url='https://somehost.com/api/v3/callme')
 
-        self.assertRegexpMatches(
+        self.assertRegex(
             result, r'^userapiid:\w+;timestamp:\d+;token:TOKEN123;hmac:HASHED_VALUE$')
 
     def test_get_passes_the_concatenated_values_of_apiKey_url_timestamp_and_token_to_hmacer(self):
@@ -30,5 +30,5 @@ class TestAuthenticationParameterProvider(unittest.TestCase):
                      apiKey='API_KEY',
                      url='https://somehost.com/api/v3/callme')
 
-        self.assertRegexpMatches(hmacer.hash.call_args[0][
+        self.assertRegex(hmacer.hash.call_args[0][
                                  0], r"API_KEYhttps://somehost.com/api/v3/callme\d+TOKEN123")
