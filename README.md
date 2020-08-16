@@ -10,7 +10,7 @@ Then just `import cloudshare` and use the function `cloudshare.req()` described 
 
 Interface
 ---------
-This library is written for python 2.7.
+This library is written for python 3.
 
 ```
 def req(hostname, method, apiId, apiKey, path="", queryParams=None, content=None)
