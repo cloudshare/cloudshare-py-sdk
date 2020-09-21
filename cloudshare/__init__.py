@@ -24,5 +24,5 @@ def req(hostname, method, apiId, apiKey, path="", queryParams=None, content=None
 
 
 def _get_requester():
-    from . import ioc
-    return ioc.get_requester()
+    from .ioc import get_requester
+    return get_requester()

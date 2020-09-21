@@ -2,7 +2,7 @@
 import sys
 import os
 import sys
-from . import ioc
+from .ioc import get_requester
 import re
 
 
@@ -175,13 +175,13 @@ def put(path, queryParams=None):
 
 def request(method, path, queryParams=None, content=None):
 
-    res = ioc.get_requester().request(hostname=os.environ.get('CLOUDSHARE_HOSTNAME', "use.cloudshare.com"),
-                                    method=method,
-                                    apiId=os.environ.get('CLOUDSHARE_API_ID'),
-                                    apiKey=os.environ.get('CLOUDSHARE_API_KEY'),
-                                    path=path,
-                                    queryParams=queryParams,
-                                    content=content)
+    res = get_requester().request(hostname=os.environ.get('CLOUDSHARE_HOSTNAME', "use.cloudshare.com"),
+                                  method=method,
+                                  apiId=os.environ.get('CLOUDSHARE_API_ID'),
+                                  apiKey=os.environ.get('CLOUDSHARE_API_KEY'),
+                                  path=path,
+                                  queryParams=queryParams,
+                                  content=content)
 
     if res.status // 100 != 2:
         print(res.status, res.content)
