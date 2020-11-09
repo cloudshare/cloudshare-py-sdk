@@ -156,7 +156,7 @@ def request(method, path, queryParams=None, content=None):
                     path=path,
                     queryParams=queryParams,
                     content=content)
-    if res.status / 100 != 2:
+    if res.status // 100 != 2:
         raise Exception('{} {}'.format(res.status, res.content['message']))
     return res.content
 
