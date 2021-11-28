@@ -86,9 +86,13 @@ make build test
 
 ## Let's Encrypt Certificates
 You might need to install these root certificates if they were not updated by the OS
+
 https://letsencrypt.org/certs/isrgrootx1.der
+
 https://letsencrypt.org/certs/isrg-root-x2.der
+
 https://letsencrypt.org/certs/lets-encrypt-r3.der
+
 
 More info here:
 https://letsencrypt.org/certificates/
