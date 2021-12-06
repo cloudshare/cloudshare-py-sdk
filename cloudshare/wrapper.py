@@ -153,12 +153,25 @@ def resume(env_token):
 def env_get_extended(env_token):
     return get('/envs/actions/getextended?envId={}'.format(with_env_prefix(env_token)))
 
+
 def get_envs():
     return get('envs/?brief=false')
 
 
 def del_env(env_token):
     return request('DELETE', '/envs/'+with_env_prefix(env_token))
+
+
+def execute_path(vm_id, command):
+    content = {
+        "vmId": vm_id,
+        "path": command
+    }
+    return post('/vms/actions/executepath', content)
+
+
+def check_execution_status(vm_id, execution_id):
+    return get('/vms/actions/checkexecutionstatus?vmId={}&executionId={}'.format(vm_id, execution_id))
 
 
 def post(path, content=None):
