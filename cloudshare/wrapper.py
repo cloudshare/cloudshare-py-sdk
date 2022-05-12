@@ -198,10 +198,10 @@ def remove_bp_from_project(project_name, bp_name):
     ))
 
 
-def add_bp_to_project(project_name, bp_name):
-    return post('/Projects/{project_id}/blueprints/{bp_id}/Post'.format(
-        project_id=get_proj_id(project_name),
-        bp_id=get_bp_id(get_proj_id(project_name), bp_name)
+def add_bp_to_project(src_project_name, dest_project_name, bp_name):
+    return post('/Projects/{dest_project_id}/blueprints/{bp_id}/Post'.format(
+        dest_project_id=get_proj_id(dest_project_name),
+        bp_id=get_bp_id(get_proj_id(src_project_name), bp_name)
     ))
 
 
