@@ -250,6 +250,15 @@ def get_bp_snapshot(project_name, bp_name, snapshot_name):
         return matches[0]
 
 
+def change_bp_ownership(proj_name, bp_name, node_id):
+    proj_id = get_proj_id(proj_name)
+    bp_id = get_bp_id(proj_id, bp_name)
+    return put('/backendadmin/Actions/changeBlueprintOwner?blueprintId={bp_id}&nodeId={node_id}'.format(
+        bp_id=bp_id,
+        node_id=node_id
+    ))
+
+
 def post(path, content=None):
     return request('POST', path, content=content)
 
