@@ -237,6 +237,10 @@ class Wrapper(object):
             node_id=node_id
         ))
 
+    def get_external_id(self, internal_id, entity_type='EN'):
+        return wrapper.get('/admin/Actions/TranslateInternalIdToExternalId?internalId={}&entityType={}'.format(
+            internal_id, entity_type))
+
     def post(self, path, content=None):
         return self.request('POST', path, content=content)
 
