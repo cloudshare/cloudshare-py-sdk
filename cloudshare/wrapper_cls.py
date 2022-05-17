@@ -184,10 +184,10 @@ class Wrapper(object):
             bp_id=self.get_bp_id(self.get_proj_id(project_name), bp_name)
         ))
 
-    def add_bp_to_project(self, src_project_name, dest_project_name, bp_name):
+    def add_bp_to_project(self, dest_project_name, bp_id):
         return self.post('/Projects/{dest_project_id}/blueprints/{bp_id}/Post'.format(
             dest_project_id=self.get_proj_id(dest_project_name),
-            bp_id=self.get_bp_id(self.get_proj_id(src_project_name), bp_name)
+            bp_id=bp_id
         ))
 
     def execute_path(self, vm_id, command):
@@ -217,6 +217,9 @@ class Wrapper(object):
         bp_id = self.get_bp_id(project_id, bp_name)
         return self.get('/projects/{project_id}/blueprints/{bp_id}'.format(project_id=project_id, bp_id=bp_id))
 
+    def get_bp_by_id(self, bp_id):
+        return self.get('/blueprints/{bp_id}'.format(bp_id=bp_id))
+
     def get_bp_snapshots(self, project_name, bp_name):
         bp = self.get_bp(project_name, bp_name)
         return bp['createFromVersions']
@@ -238,7 +241,7 @@ class Wrapper(object):
         ))
 
     def get_external_id(self, internal_id, entity_type='EN'):
-        return wrapper.get('/admin/Actions/TranslateInternalIdToExternalId?internalId={}&entityType={}'.format(
+        return self.get('/admin/Actions/TranslateInternalIdToExternalId?internalId={}&entityType={}'.format(
             internal_id, entity_type))
 
     def post(self, path, content=None):
