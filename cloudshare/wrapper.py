@@ -258,6 +258,9 @@ def change_bp_ownership(proj_name, bp_name, node_id):
         node_id=node_id
     ))
 
+def validate_vix(machine_token):
+    return post('/vms/actions/validateVix?vmId={}'.format(machine_token))
+
 
 def post(path, content=None):
     return request('POST', path, content=content)

@@ -244,6 +244,12 @@ class Wrapper(object):
         return self.get('/admin/Actions/TranslateInternalIdToExternalId?internalId={}&entityType={}'.format(
             internal_id, entity_type))
 
+    def validate_vix(self, machine_token):
+        return self.post('/vms/actions/validateVix?vmId={}'.format(machine_token))
+
+    def get_vm_list(self, env_token):
+        return self.get('/viewer/actions/vmList?envId={}'.format(env_token))
+
     def post(self, path, content=None):
         return self.request('POST', path, content=content)
 
