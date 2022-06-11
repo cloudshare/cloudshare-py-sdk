@@ -244,11 +244,20 @@ class Wrapper(object):
         return self.get('/admin/Actions/TranslateInternalIdToExternalId?internalId={}&entityType={}'.format(
             internal_id, entity_type))
 
+    def get_internal_id(self, external_id):
+        return self.get('/admin/Actions/TranslateExternalIdToInternalId?externalId={}'.format(
+            external_id))
+
     def validate_vix(self, machine_token):
         return self.post('/vms/actions/validateVix?vmId={}'.format(machine_token))
 
     def get_vm_list(self, env_token):
         return self.get('/viewer/actions/vmList?envId={}'.format(env_token))
+
+    def delete_bp(self, proj_name, bp_name):
+        proj_id = self.get_proj_id(proj_name)
+        bp_id = self.get_bp_id(proj_id, bp_name)
+        return self.delete('/blueprints/actions/Delete?blueprintId={}'.format(bp_id))
 
     def post(self, path, content=None):
         return self.request('POST', path, content=content)
@@ -258,6 +267,9 @@ class Wrapper(object):
 
     def put(self, path, queryParams=None):
         return self.request('PUT', path)
+
+    def delete(self, path, queryParams=None):
+        return self.request('DELETE', path)
 
     def request(self, method, path, queryParams=None, content=None):
         res = get_requester().request(hostname=self.hostname,
