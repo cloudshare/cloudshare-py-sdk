@@ -179,9 +179,14 @@ class Wrapper(object):
         ))
 
     def remove_bp_from_project(self, project_name, bp_name):
+        if bp_name.startswith('BP') and bp_name.find(' ')==-1:
+            bp_id = bp_name
+        else:
+            bp_id = self.get_bp_id(self.get_proj_id(project_name), bp_name)
+
         return self.put('/Projects/{project_id}/blueprints/{bp_id}/removeFromProject'.format(
             project_id=self.get_proj_id(project_name),
-            bp_id=self.get_bp_id(self.get_proj_id(project_name), bp_name)
+            bp_id=bp_id
         ))
 
     def add_bp_to_project(self, dest_project_name, bp_id):
