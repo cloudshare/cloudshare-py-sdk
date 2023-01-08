@@ -270,8 +270,8 @@ def get(path, queryParams=None):
     return request('GET', path, queryParams=queryParams)
 
 
-def put(path, queryParams=None):
-    return request('PUT', path)
+def put(path, queryParams=None, content=None):
+    return request('PUT', path, queryParams=queryParams, content=content)
 
 
 def request(method, path, queryParams=None, content=None):
